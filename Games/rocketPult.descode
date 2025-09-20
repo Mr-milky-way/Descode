@@ -1,0 +1,12 @@
+var number Timer = 0
+
+var vector Input = ()
+
+ticker(0) {
+    Update(dt)
+}
+
+function Update(DeltaTime) {
+    Timer = Timer+DeltaTime;
+}
+
