@@ -1,0 +1,3 @@
+
+var M = Math.mean(Points[vertices.x],Points[vertices.y],Points[vertices.z]);
+var n = ((Points[vertices.y]-Points[vertices.x])*(Points[vertices.z]-Points[vertices.x]));

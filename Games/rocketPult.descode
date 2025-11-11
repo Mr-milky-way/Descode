@@ -1,12 +1,58 @@
-var number Timer = 0
+var Timer = 0;
+var Horiz = 0;
+var TimeFromLastHoriz = 0;
+var Vert = 0;
+var HorizOffset = 0;
+var VertOffset = 0;
+var maxThrustInput = 10;
+var Grav = 9.8;
+var Weight = 1;
+var FuelPercent = 100;
+var FuelLossSpeedAtmaxThrust = 0.00001;
 
-var vector Input = ()
+var Input = (-HorizOffset + Horiz, -VertOffset + Vert);
+var MoveInDir = (0,0);
+var BackgroundOffset = (0,0);
+
 
 ticker(0) {
-    Update(dt)
+    Update(Math.dt)
 }
 
 function Update(DeltaTime) {
     Timer = Timer+DeltaTime;
+    GetInput()
+    CalcFuel(DeltaTime)
 }
 
+function GetInput() {
+    if (FuelPercent > 0) {
+        if (MoveInDir.y > maxThrustInput) {
+            MoveInDir = (MoveInDir.x, maxThrustInput);
+        } else if (MoveInDir.y < 0) {
+            MoveInDir = (MoveInDir.x, 0);
+        } else if (Horiz > HorizOffset) {
+            MoveInDir = (MoveInDir.x+1, MoveInDir.y);
+        } else if (Horiz < HorizOffset) {
+            MoveInDir = (MoveInDir.x-1, MoveInDir.y);
+        } else if (Vert > VertOffset) {
+            MoveInDir = (MoveInDir.x, MoveInDir.y+1);
+        } else if (Vert < VertOffset) {
+            MoveInDir = (MoveInDir.x, MoveInDir.y-1);
+        }
+    } else {
+        MoveInDir = (0,0);
+    }
+    HorizOffset = Horiz;
+    VertOffset = Vert;
+}
+
+function CalcFuel(DeltaTime) {
+    if (FuelPercent > 0) {
+        if (FuelLossSpeedAtmaxThrust*MoveInDir.y/maxThrustInput*DeltaTime*1000 >= 0) {
+            FuelPercent = FuelPercent - FuelLossSpeedAtmaxThrust*(MoveInDir.y/maxThrustInput)*DeltaTime*1000;
+        }
+    } else {
+        FuelPercent = 0;
+    }
+}

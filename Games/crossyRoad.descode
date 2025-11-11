@@ -1,0 +1,40 @@
+var Score = 0
+var Timer = 0
+var Horiz = 0
+var TimeFromLastHoriz = 0
+var Vert = 0
+var HorizOffset = 0
+var VertOffset = 0
+var CharDir = 180
+var IsDead = 0
+
+var input = (-HorizOffset + Horiz, -VertOffset + Vert)
+var CharLoc = (0,0)
+
+ticker(0) {
+    Update(Math.dt)
+}
+
+function Update(DeltaTime) {
+    Timer = Timer + DeltaTime
+    MovePlayer()
+}
+
+function MovePlayer() {
+    if (Horiz > HorizOffset) {
+        CharLoc = (CharLoc.x+1, CharLoc.y);
+    } else if (Horiz < HorizOffset) {
+        CharLoc = (CharLoc.x-1, CharLoc.y);
+    }
+    if (Vert > VertOffset) {
+        CharLoc = (CharLoc.x, CharLoc.y+1);
+    } else if (Vert < VertOffset) {
+        CharLoc = (CharLoc.x, CharLoc.y-1);
+    }
+    if (IsDead = 1) {
+        CharLoc = (0,0);
+        IsDead = 0;
+    }
+    HorizOffset = Horiz;
+    VertOffset = Vert;
+}
