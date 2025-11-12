@@ -1,3 +1,49 @@
+#IMPORT OBJ untitled Points vertices color Main;
 
-var M = Math.mean(Points[vertices.x],Points[vertices.y],Points[vertices.z]);
-var n = ((Points[vertices.y]-Points[vertices.x])*(Points[vertices.z]-Points[vertices.x]));
+folder ThreeDRotationMatrices {
+    var rot = [Math.cos(h),Math.sin(h),Math.cos(v),Math.sin(v)];
+    var Rot = ((x.x-f.x)rot[1]-(x.y-f.y)rot[2],rot[3]((x.x-f.x)rot[2]+(x.y-f.y)rot[1])-(x.z-f.z)rot[4],rot[4]((x.x-f.x)rot[2]+(x.y-f.y)rot[1])+(x.z-f.z)rot[3]);
+    function Make(x) {
+        if (Rot.y > -distance) {
+            return Math.max(ratio,1) * (10/FOV) * (Rot.x,Rot.z)/(Rot.y+distance);
+        }
+    }
+}
+    
+
+
+folder Params {
+    var f = (0,0,0);
+    var FOV = 0.7;
+    var ratio = Math.height/Math.width;
+    var distance = 7.2;
+    var camera = -distance * (Math.sin(h) * Math.cos(-v),Math.cos(h) * Math.cos(-v),Math.sin(-v)) + f;
+    var h = -0.35;
+    var v = 0.1;
+}
+
+
+
+folder InitialProcessing {
+    var M = Math.mean(Points[vertices.x],Points[vertices.y],Points[vertices.z]);
+    var n = (Points[vertices.y]-Points[vertices.x])Math.times(Points[vertices.z]-Points[vertices.x]);
+    var N = n/|n|;
+    var backFace = |M + N / 100 - camera| - |M - camera|;
+    var p = Make(Points);
+    var Ncull = N[backFace<0];
+    var Mcull = M[backFace<0];
+    var Sides = Math.polygon(p[vertices.x],p[vertices.y],p[vertices.z])[backFace < 0];
+    var order = -|Mcull-camera|;
+}
+
+folder lighting {
+    var light = (100,200,100);
+    var L = (light-Mcull)/|light-Mcull|;
+    var Lighting = |L-Ncull|;
+    var diffusion = 0.7;
+    var Color = Math.sort(Math.hsv(color.x[backFace<0],color.y[backFace<0],color.z[backFace<0]* (1-(1-diffusion)Lighting)),order);
+}
+
+folder Render {
+    var Render = Math.sort(Sides,order);
+}
