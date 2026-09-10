@@ -1,28 +1,50 @@
-var Timer = 0;
-var Horiz = 0;
-var TimeFromLastHoriz = 0;
-var Vert = 0;
-var HorizOffset = 0;
-var VertOffset = 0;
-var maxThrustInput = 10;
-var Grav = 9.8;
-var Weight = 1;
-var FuelPercent = 100;
-var FuelLossSpeedAtmaxThrust = 0.00001;
+folder GlobalSimVars {
+    var Timer = 0;
+    var Grav = 9.8;
+}
 
-var Input = (-HorizOffset + Horiz, -VertOffset + Vert);
-var MoveInDir = (0,0);
-var BackgroundOffset = (0,0);
+folder Input {
+    var Horiz = 0;
+    var TimeFromLastHoriz = 0;
+    var Vert = 0;
+    var HorizOffset = 0;
+    var VertOffset = 0;
+    var Input = (-HorizOffset + Horiz, -VertOffset + Vert);
+    
+    /* rocket Input stuff */
+    var maxThrustInput = 10;
+    var MoveInDir = (0,0);
+}
 
+
+folder RocketVarables {
+    var Weight = -1;
+    var FullFuelWeight = 120;
+    var dryWeight = 85;
+    var FuelPercent = 100;
+    var FuelLossSpeedAtmaxThrust = 0.00001;
+    var MaxThrust = 74;
+    var Velocity = (0,0);
+}
+
+folder BackgroundStuff {
+    var BackgroundOffset = (0,0);
+}
 
 ticker(0) {
     Update(Math.dt)
 }
 
+
 function Update(DeltaTime) {
     Timer = Timer+DeltaTime;
     GetInput()
     CalcFuel(DeltaTime)
+    UpdateRockectPos(DeltaTime)
+}
+
+function UpdateRockectPos(DeltaTime) {
+     
 }
 
 function GetInput() {
@@ -55,4 +77,17 @@ function CalcFuel(DeltaTime) {
     } else {
         FuelPercent = 0;
     }
+    Weight = dryWeight + FullFuelWeight*(FuelPercent/100);
 }
+
+
+function Reset() {
+    FuelPercent = 100;
+    MoveInDir = (0,0);
+    BackgroundOffset = (0,0);
+}
+
+
+
+
+
