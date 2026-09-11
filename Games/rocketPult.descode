@@ -11,6 +11,7 @@ folder Input {
     var VertOffset = 0;
     var Input = (-HorizOffset + Horiz, -VertOffset + Vert);
     
+    /* rocket Input stuff */
     var maxThrustInput = 10;
     var AccelDir = (0,0);
     var RotationSpeed = 0;
@@ -78,7 +79,7 @@ function GetInput() {
 function CalcFuel(DeltaTime) {
     if (FuelPercent > 0) {
         if (FuelLossSpeedAtmaxThrust*AccelDir.y/maxThrustInput*DeltaTime/1000 >= 0) {
-            FuelPercent = FuelPercent - FuelLossSpeedAtmaxThrust*(AccelDir.y/maxThrustInput)*(DeltaTime/1000);
+            FuelPercent = FuelPercent - FuelLossSpeedAtmaxThrust*(CurrentThrust/maxThrustInput)*(DeltaTime/1000);
         }
     } else {
         FuelPercent = 0;
