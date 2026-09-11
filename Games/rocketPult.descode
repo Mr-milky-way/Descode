@@ -1,6 +1,6 @@
 folder GlobalSimVars {
     var Timer = 0;
-    var Grav = 9.8;
+    var Grav = (0, 9.8);
 }
 
 folder Input {
@@ -11,19 +11,21 @@ folder Input {
     var VertOffset = 0;
     var Input = (-HorizOffset + Horiz, -VertOffset + Vert);
     
-    /* rocket Input stuff */
     var maxThrustInput = 10;
-    var MoveInDir = (0,0);
+    var AccelDir = (0,0);
+    var RotationSpeed = 0;
+    var CurrentThrust = 0;
 }
 
 
 folder RocketVarables {
-    var Weight = -1;
+    var Weight = 205;
     var FullFuelWeight = 120;
     var dryWeight = 85;
     var FuelPercent = 100;
-    var FuelLossSpeedAtmaxThrust = 0.00001;
-    var MaxThrust = 74;
+    var FuelLossSpeedAtmaxThrust = 1;
+    var MaxThrust = 74000;
+    var CurrentRotation = 0;
     var Velocity = (0,0);
 }
 
@@ -35,35 +37,39 @@ ticker(0) {
     Update(Math.dt)
 }
 
-
+/* DT needs to be div by 1000 to get seconds*/
 function Update(DeltaTime) {
-    Timer = Timer+DeltaTime;
+    Timer = Timer+DeltaTime/1000;
     GetInput()
     CalcFuel(DeltaTime)
     UpdateRockectPos(DeltaTime)
 }
 
 function UpdateRockectPos(DeltaTime) {
-     
+    CurrentRotation = CurrentRotation + RotationSpeed * (DeltaTime/1000);
+    AccelDir = (-CurrentThrust * Math.sin(CurrentRotation), CurrentThrust * Math.cos(CurrentRotation));
+    Velocity = Velocity + ((((AccelDir / 100) * MaxThrust)/Weight) * (DeltaTime/1000)) - (Grav * (DeltaTime/1000));
+    
+    BackgroundOffset = BackgroundOffset - (Velocity * (DeltaTime/1000));
 }
 
 function GetInput() {
     if (FuelPercent > 0) {
-        if (MoveInDir.y > maxThrustInput) {
-            MoveInDir = (MoveInDir.x, maxThrustInput);
-        } else if (MoveInDir.y < 0) {
-            MoveInDir = (MoveInDir.x, 0);
+        if (CurrentThrust > maxThrustInput) {
+            CurrentThrust = maxThrustInput;
+        } else if (CurrentThrust < 0) {
+            CurrentThrust = 0;
         } else if (Horiz > HorizOffset) {
-            MoveInDir = (MoveInDir.x+1, MoveInDir.y);
+            RotationSpeed = RotationSpeed-1;
         } else if (Horiz < HorizOffset) {
-            MoveInDir = (MoveInDir.x-1, MoveInDir.y);
+            RotationSpeed = RotationSpeed+1;
         } else if (Vert > VertOffset) {
-            MoveInDir = (MoveInDir.x, MoveInDir.y+1);
+            CurrentThrust = CurrentThrust+1;
         } else if (Vert < VertOffset) {
-            MoveInDir = (MoveInDir.x, MoveInDir.y-1);
+            CurrentThrust = CurrentThrust-1;
         }
     } else {
-        MoveInDir = (0,0);
+        CurrentThrust = 0;
     }
     HorizOffset = Horiz;
     VertOffset = Vert;
@@ -71,8 +77,8 @@ function GetInput() {
 
 function CalcFuel(DeltaTime) {
     if (FuelPercent > 0) {
-        if (FuelLossSpeedAtmaxThrust*MoveInDir.y/maxThrustInput*DeltaTime*1000 >= 0) {
-            FuelPercent = FuelPercent - FuelLossSpeedAtmaxThrust*(MoveInDir.y/maxThrustInput)*DeltaTime*1000;
+        if (FuelLossSpeedAtmaxThrust*AccelDir.y/maxThrustInput*DeltaTime/1000 >= 0) {
+            FuelPercent = FuelPercent - FuelLossSpeedAtmaxThrust*(AccelDir.y/maxThrustInput)*(DeltaTime/1000);
         }
     } else {
         FuelPercent = 0;
@@ -83,8 +89,12 @@ function CalcFuel(DeltaTime) {
 
 function Reset() {
     FuelPercent = 100;
-    MoveInDir = (0,0);
+    AccelDir = (0,0);
     BackgroundOffset = (0,0);
+    Velocity = (0,0);
+    RotationSpeed = 0;
+    CurrentThrust = 0;
+    CurrentRotation = 0;
 }
 
 
